@@ -1,18 +1,24 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from pymongo import MongoClient
 
 app = Flask(__name__)
 
-#MongoDB Connection (local)
-client = MongoClient("mongodb://127.0.0.1:27017")  # or replace with Compass URI if different
+# MongoDB connection
+client = MongoClient("mongodb://127.0.0.1:27017")
 db = client["github_events"]
 collection = db["events"]
 
 @app.route('/')
 def home():
-    return " Webhook Receiver Running!"
+    return "✅ Webhook Receiver Running!"
 
+# ✅ HTML view route
+@app.route('/view')
+def view_events():
+    return render_template("index.html")
+
+# ✅ Webhook route
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.json
@@ -76,6 +82,5 @@ def get_events():
 
     return jsonify(result)
 
-    
 if __name__ == "__main__":
     app.run(debug=True)
